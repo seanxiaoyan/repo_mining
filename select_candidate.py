@@ -32,7 +32,7 @@ selected_repo = [repo_list[0]]
 processed = set()
 
 for repo in repo_list:
-    if count == 100:
+    if len(selected_repo) > 30 or visit_count > 2000:
         save_current_state(selected_repo)
 
     visit_count += 1
@@ -74,6 +74,9 @@ for repo in repo_list:
             count += 1
             
         else:
+            if response.json()['stargazers_count']<80 or response.json()['language'] != 'Python':
+                continue
+
             if repo[0] in processed:
                 continue
             processed.add(repo[0])
@@ -85,7 +88,6 @@ for repo in repo_list:
         
     elif response.status_code == 403:
         print(f"-error: {repo[0]} - {response.json()['message']}")
-        save_current_state(selected_repo, visit_count)
     else:
         print(f"-error: {repo[0]} - {response.status_code} - {response.json()['message']}")    
 
